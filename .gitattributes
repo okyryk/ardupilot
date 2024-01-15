@@ -1,4 +1,6 @@
-
+* text=auto eol=lf
+*.{cmd,[cC][mM][dD]} text eol=crlf
+*.{bat,[bB][aA][tT]} text eol=crlf
 # bash gets confused if you pass in .sh files from windows
 # This breaks Vagrant for some users.
 *.sh text eol=lf
