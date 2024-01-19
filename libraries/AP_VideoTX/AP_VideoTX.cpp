@@ -72,8 +72,171 @@ const AP_Param::GroupInfo AP_VideoTX::var_info[] = {
     // @Param: MAX_POWER
     // @DisplayName: Video Transmitter Max Power Level
     // @Description: Video Transmitter Maximum Power Level. Different VTXs support different power levels, this prevents the power aux switch from requesting too high a power level. The switch supports 6 power levels and the selected power will be a subdivision between 0 and this setting.
-    // @Range: 25 1000
-    AP_GROUPINFO("MAX_POWER", 7, AP_VideoTX, _max_power_mw, 800),
+   // @Range: 25 2500
+    AP_GROUPINFO("MAX_POWER", 7, AP_VideoTX, _max_power_mw, 2500),
+
+    // @Param: TABLE_0_POWER_LEVEL
+    // @DisplayName: TABLE_0_POWER_LEVEL
+    // @Description: Video Transmitter Power Level 0 - 8 or 255
+    // @Range: 0 255
+    AP_GROUPINFO("T_PL_0", 8, AP_VideoTX, _vtx_table_0_power_level_level, 0XFF),
+
+    // @Param: TABLE_1_POWER_LEVEL
+    // @DisplayName: TABLE_1_POWER_LEVEL
+    // @Description: Video Transmitter Power Level 0 - 8 or 255
+    // @Range: 0 255
+    AP_GROUPINFO("T_PL_1", 9, AP_VideoTX, _vtx_table_1_power_level_level, 0),
+
+    // @Param: TABLE_2_POWER_LEVEL
+    // @DisplayName: TABLE_2_POWER_LEVEL
+    // @Description: Video Transmitter Power Level 0 - 8 or 255
+    // @Range: 0 255
+    AP_GROUPINFO("T_PL_2", 10, AP_VideoTX, _vtx_table_2_power_level_level, 1),
+
+    // @Param: TABLE_3_POWER_LEVEL
+    // @DisplayName: TABLE_3_POWER_LEVEL
+    // @Description: Video Transmitter Power Level 0 - 8 or 255
+    // @Range: 0 255
+    AP_GROUPINFO("T_PL_3", 11, AP_VideoTX, _vtx_table_3_power_level_level, 2),
+
+    // @Param: TABLE_4_POWER_LEVEL
+    // @DisplayName: TABLE_4_POWER_LEVEL
+    // @Description: Video Transmitter Power Level 0 - 8 or 255
+    // @Range: 0 255
+    AP_GROUPINFO("T_PL_4", 12, AP_VideoTX, _vtx_table_4_power_level_level, 3),
+
+    // @Param: TABLE_5_POWER_LEVEL
+    // @DisplayName: TABLE_5_POWER_LEVEL
+    // @Description: Video Transmitter Power Level 0 - 8 or 255
+    // @Range: 0 255
+    AP_GROUPINFO("T_PL_5", 13, AP_VideoTX, _vtx_table_5_power_level_level, 0xFF),
+
+    // @Param: TABLE_6_POWER_LEVEL
+    // @DisplayName: TABLE_6_POWER_LEVEL
+    // @Description: Video Transmitter Power Level 0 - 8 or 255
+    // @Range: 0 255
+    AP_GROUPINFO("T_PL_6", 14, AP_VideoTX, _vtx_table_6_power_level_level, 0xFF),
+
+    // @Param: TABLE_7_POWER_LEVEL
+    // @DisplayName: TABLE_7_POWER_LEVEL
+    // @Description: Video Transmitter Power Level 0 - 8 or 255
+    // @Range: 0 255
+    AP_GROUPINFO("T_PL_7", 15, AP_VideoTX, _vtx_table_7_power_level_level, 0xFF),
+
+    // @Param: TABLE_8_POWER_LEVEL
+    // @DisplayName: TABLE_8_POWER_LEVEL
+    // @Description: Video Transmitter Power Level 0 - 8 or 255
+    // @Range: 0 255
+    AP_GROUPINFO("T_PL_8", 16, AP_VideoTX, _vtx_table_8_power_level_level, 0xFF),
+
+
+    // @Param: TABLE_0_POWER_LEVEL_MW
+    // @DisplayName: TABLE_0_POWER_LEVEL_MW
+    // @Description: Video Transmitter Power Level mw
+    // @Range: 0 2500
+    AP_GROUPINFO("T_P_MW_0", 17, AP_VideoTX, _vtx_table_0_power_level_mw, 0),
+
+    // @Param: TABLE_1_POWER_LEVEL_MW
+    // @DisplayName: TABLE_1_POWER_LEVEL_MW
+    // @Description: Video Transmitter Power Level mw
+    // @Range: 0 2500
+    AP_GROUPINFO("T_P_MW_1", 18, AP_VideoTX, _vtx_table_1_power_level_mw, 25),
+
+    // @Param: TABLE_2_POWER_LEVEL_MW
+    // @DisplayName: TABLE_2_POWER_LEVEL_MW
+    // @Description: Video Transmitter Power Level mw
+    // @Range: 0 2500
+    AP_GROUPINFO("T_P_MW_2", 19, AP_VideoTX, _vtx_table_2_power_level_mw, 25),
+
+    // @Param: TABLE_3_POWER_LEVEL_MW
+    // @DisplayName: TABLE_3_POWER_LEVEL_MW
+    // @Description: Video Transmitter Power Level mw
+    // @Range: 0 2500
+    AP_GROUPINFO("T_P_MW_3", 20, AP_VideoTX, _vtx_table_3_power_level_mw, 400),
+
+    // @Param: TABLE_4_POWER_LEVEL_MW
+    // @DisplayName: TABLE_4_POWER_LEVEL_MW
+    // @Description: Video Transmitter Power Level mw
+    // @Range: 0 2500
+    AP_GROUPINFO("T_P_MW_4", 21, AP_VideoTX, _vtx_table_4_power_level_mw, 400),
+
+    // @Param: TABLE_5_POWER_LEVEL_MW
+    // @DisplayName: TABLE_5_POWER_LEVEL_MW
+    // @Description: Video Transmitter Power Level mw
+    // @Range: 0 2500
+    AP_GROUPINFO("T_P_MW_5", 22, AP_VideoTX, _vtx_table_5_power_level_mw, 1000),
+
+    // @Param: TABLE_6_POWER_LEVEL_MW
+    // @DisplayName: TABLE_6_POWER_LEVEL_MW
+    // @Description: Video Transmitter Power Level mw
+    // @Range: 0 2500
+    AP_GROUPINFO("T_P_MW_6", 23, AP_VideoTX, _vtx_table_6_power_level_mw, 1000),
+
+    // @Param: TABLE_7_POWER_LEVEL_MW
+    // @DisplayName: TABLE_7_POWER_LEVEL_MW
+    // @Description: Video Transmitter Power Level mw
+    // @Range: 0 2500
+    AP_GROUPINFO("T_P_MW_7", 24, AP_VideoTX, _vtx_table_7_power_level_mw, 2500),
+
+    // @Param: TABLE_8_POWER_LEVEL_MW
+    // @DisplayName: TABLE_8_POWER_LEVEL_MW
+    // @Description: Video Transmitter Power Level mw
+    // @Range: 0 2500
+    AP_GROUPINFO("T_P_MW_8", 25, AP_VideoTX, _vtx_table_8_power_level_mw, 2500),
+
+    // @Param: TABLE_0_POWER_LEVEL_DBM
+    // @DisplayName: TABLE_0_POWER_LEVEL_DBM
+    // @Description: Video Transmitter Power Level dbm
+    // @Range: 0 50
+    AP_GROUPINFO("T_P_MW_DBM_0", 26, AP_VideoTX, _vtx_table_0_power_level_dbm, 0),
+
+    // @Param: TABLE_1_POWER_LEVEL_DBM
+    // @DisplayName: TABLE_1_POWER_LEVEL_DBM
+    // @Description: Video Transmitter Power Level dbm
+    // @Range: 0 50
+    AP_GROUPINFO("T_P_MW_DBM_1", 27, AP_VideoTX, _vtx_table_1_power_level_dbm, 14),
+
+    // @Param: TABLE_2_POWER_LEVEL_DBM
+    // @DisplayName: TABLE_2_POWER_LEVEL_DBM
+    // @Description: Video Transmitter Power Level dbm
+    // @Range: 0 50
+    AP_GROUPINFO("T_P_MW_DBM_2", 28, AP_VideoTX, _vtx_table_2_power_level_dbm, 14),
+
+    // @Param: TABLE_3_POWER_LEVEL_DBM
+    // @DisplayName: TABLE_3_POWER_LEVEL_DBM
+    // @Description: Video Transmitter Power Level dbm
+    // @Range: 0 50
+    AP_GROUPINFO("T_P_MW_DBM_3", 29, AP_VideoTX, _vtx_table_3_power_level_dbm, 26),
+
+    // @Param: TABLE_4_POWER_LEVEL_DBM
+    // @DisplayName: TABLE_4_POWER_LEVEL_DBM
+    // @Description: Video Transmitter Power Level dbm
+    // @Range: 0 50
+    AP_GROUPINFO("T_P_MW_DBM_4", 30, AP_VideoTX, _vtx_table_4_power_level_dbm, 26),
+
+    // @Param: TABLE_5_POWER_LEVEL_DBM
+    // @DisplayName: TABLE_5_POWER_LEVEL_DBM
+    // @Description: Video Transmitter Power Level dbm
+    // @Range: 0 50
+    AP_GROUPINFO("T_P_MW_DBM_5", 31, AP_VideoTX, _vtx_table_5_power_level_dbm, 30),
+
+    // @Param: TABLE_6_POWER_LEVEL_DBM
+    // @DisplayName: TABLE_6_POWER_LEVEL_DBM
+    // @Description: Video Transmitter Power Level dbm
+    // @Range: 0 50
+    AP_GROUPINFO("T_P_MW_DBM_6", 32, AP_VideoTX, _vtx_table_6_power_level_dbm, 30),
+
+    // @Param: TABLE_7_POWER_LEVEL_DBM
+    // @DisplayName: TABLE_7_POWER_LEVEL_DBM
+    // @Description: Video Transmitter Power Level dbm
+    // @Range: 0 50
+    AP_GROUPINFO("T_P_MW_DBM_7", 33, AP_VideoTX, _vtx_table_7_power_level_dbm, 34),
+
+    // @Param: TABLE_8_POWER_LEVEL_DBM
+    // @DisplayName: TABLE_8_POWER_LEVEL_DBM
+    // @Description: Video Transmitter Power Level dbm
+    // @Range: 0 50
+    AP_GROUPINFO("T_P_MW_DBM_8", 34, AP_VideoTX, _vtx_table_8_power_level_dbm, 34),
 
     AP_GROUPEND
 };
