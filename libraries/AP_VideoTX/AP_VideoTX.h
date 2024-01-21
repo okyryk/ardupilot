@@ -193,6 +193,7 @@ public:
     uint8_t get_configured_vtx_table_7_power_level_dbm() const { return _vtx_table_7_power_level_dbm; }
     uint8_t get_configured_vtx_table_8_power_level_dbm() const { return _vtx_table_8_power_level_dbm; }
 
+    bool get_vtx_table_enabled() const { return _vtx_table_enabled; }
 private:
     uint8_t find_current_power() const;
     // channel frequency
@@ -254,6 +255,8 @@ private:
      AP_Int8 _vtx_table_6_power_level_dbm;
      AP_Int8 _vtx_table_7_power_level_dbm;
      AP_Int8 _vtx_table_8_power_level_dbm;
+
+     AP_Int8 _vtx_table_enabled;
 };
 
 namespace AP {

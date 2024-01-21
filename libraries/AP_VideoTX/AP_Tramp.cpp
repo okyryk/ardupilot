@@ -484,50 +484,52 @@ bool AP_Tramp::init(void)
         return false;
     }
 
-    AP::vtx()._power_levels[0].level = AP::vtx().get_configured_vtx_table_0_power_level();
-    AP::vtx()._power_levels[0].mw = AP::vtx().get_configured_vtx_table_0_power_level_mw();
-    AP::vtx()._power_levels[0].dbm = AP::vtx().get_configured_vtx_table_0_power_level_dbm();
-    AP::vtx()._power_levels[0].dac = 0;
+    if (AP::vtx().get_vtx_table_enabled()) {
+        AP::vtx()._power_levels[0].level = AP::vtx().get_configured_vtx_table_0_power_level();
+        AP::vtx()._power_levels[0].mw = AP::vtx().get_configured_vtx_table_0_power_level_mw();
+        AP::vtx()._power_levels[0].dbm = AP::vtx().get_configured_vtx_table_0_power_level_dbm();
+        AP::vtx()._power_levels[0].dac = 0;
 
-    AP::vtx()._power_levels[1].level = AP::vtx().get_configured_vtx_table_1_power_level();
-    AP::vtx()._power_levels[1].mw = AP::vtx().get_configured_vtx_table_1_power_level_mw();
-    AP::vtx()._power_levels[1].dbm = AP::vtx().get_configured_vtx_table_1_power_level_dbm();
-    AP::vtx()._power_levels[1].dac = 7;
+        AP::vtx()._power_levels[1].level = AP::vtx().get_configured_vtx_table_1_power_level();
+        AP::vtx()._power_levels[1].mw = AP::vtx().get_configured_vtx_table_1_power_level_mw();
+        AP::vtx()._power_levels[1].dbm = AP::vtx().get_configured_vtx_table_1_power_level_dbm();
+        AP::vtx()._power_levels[1].dac = 7;
 
-    AP::vtx()._power_levels[2].level = AP::vtx().get_configured_vtx_table_2_power_level();
-    AP::vtx()._power_levels[2].mw = AP::vtx().get_configured_vtx_table_2_power_level_mw();
-    AP::vtx()._power_levels[2].dbm = AP::vtx().get_configured_vtx_table_2_power_level_dbm();
-    AP::vtx()._power_levels[2].dac = 0xFF;
+        AP::vtx()._power_levels[2].level = AP::vtx().get_configured_vtx_table_2_power_level();
+        AP::vtx()._power_levels[2].mw = AP::vtx().get_configured_vtx_table_2_power_level_mw();
+        AP::vtx()._power_levels[2].dbm = AP::vtx().get_configured_vtx_table_2_power_level_dbm();
+        AP::vtx()._power_levels[2].dac = 0xFF;
 
-    AP::vtx()._power_levels[3].level = AP::vtx().get_configured_vtx_table_3_power_level();
-    AP::vtx()._power_levels[3].mw = AP::vtx().get_configured_vtx_table_3_power_level_mw();
-    AP::vtx()._power_levels[3].dbm = AP::vtx().get_configured_vtx_table_3_power_level_dbm();
-    AP::vtx()._power_levels[3].dac = 0xFF;
+        AP::vtx()._power_levels[3].level = AP::vtx().get_configured_vtx_table_3_power_level();
+        AP::vtx()._power_levels[3].mw = AP::vtx().get_configured_vtx_table_3_power_level_mw();
+        AP::vtx()._power_levels[3].dbm = AP::vtx().get_configured_vtx_table_3_power_level_dbm();
+        AP::vtx()._power_levels[3].dac = 0xFF;
 
-    AP::vtx()._power_levels[4].level = AP::vtx().get_configured_vtx_table_4_power_level();
-    AP::vtx()._power_levels[4].mw = AP::vtx().get_configured_vtx_table_4_power_level_mw();
-    AP::vtx()._power_levels[4].dbm = AP::vtx().get_configured_vtx_table_4_power_level_dbm();
-    AP::vtx()._power_levels[4].dac = 0xFF;
+        AP::vtx()._power_levels[4].level = AP::vtx().get_configured_vtx_table_4_power_level();
+        AP::vtx()._power_levels[4].mw = AP::vtx().get_configured_vtx_table_4_power_level_mw();
+        AP::vtx()._power_levels[4].dbm = AP::vtx().get_configured_vtx_table_4_power_level_dbm();
+        AP::vtx()._power_levels[4].dac = 0xFF;
 
-    AP::vtx()._power_levels[5].level = AP::vtx().get_configured_vtx_table_5_power_level();
-    AP::vtx()._power_levels[5].mw = AP::vtx().get_configured_vtx_table_5_power_level_mw();
-    AP::vtx()._power_levels[5].dbm = AP::vtx().get_configured_vtx_table_5_power_level_dbm();
-    AP::vtx()._power_levels[5].dac = 0;
+        AP::vtx()._power_levels[5].level = AP::vtx().get_configured_vtx_table_5_power_level();
+        AP::vtx()._power_levels[5].mw = AP::vtx().get_configured_vtx_table_5_power_level_mw();
+        AP::vtx()._power_levels[5].dbm = AP::vtx().get_configured_vtx_table_5_power_level_dbm();
+        AP::vtx()._power_levels[5].dac = 0;
 
-    AP::vtx()._power_levels[6].level = AP::vtx().get_configured_vtx_table_6_power_level();
-    AP::vtx()._power_levels[6].mw = AP::vtx().get_configured_vtx_table_6_power_level_mw();
-    AP::vtx()._power_levels[6].dbm = AP::vtx().get_configured_vtx_table_6_power_level_dbm();
-    AP::vtx()._power_levels[6].dac = 0;
+        AP::vtx()._power_levels[6].level = AP::vtx().get_configured_vtx_table_6_power_level();
+        AP::vtx()._power_levels[6].mw = AP::vtx().get_configured_vtx_table_6_power_level_mw();
+        AP::vtx()._power_levels[6].dbm = AP::vtx().get_configured_vtx_table_6_power_level_dbm();
+        AP::vtx()._power_levels[6].dac = 0;
 
-    AP::vtx()._power_levels[7].level = AP::vtx().get_configured_vtx_table_7_power_level();
-    AP::vtx()._power_levels[7].mw = AP::vtx().get_configured_vtx_table_7_power_level_mw();
-    AP::vtx()._power_levels[7].dbm = AP::vtx().get_configured_vtx_table_7_power_level_dbm();
-    AP::vtx()._power_levels[7].dac = 0;
+        AP::vtx()._power_levels[7].level = AP::vtx().get_configured_vtx_table_7_power_level();
+        AP::vtx()._power_levels[7].mw = AP::vtx().get_configured_vtx_table_7_power_level_mw();
+        AP::vtx()._power_levels[7].dbm = AP::vtx().get_configured_vtx_table_7_power_level_dbm();
+        AP::vtx()._power_levels[7].dac = 0;
 
-    AP::vtx()._power_levels[8].level = AP::vtx().get_configured_vtx_table_8_power_level();
-    AP::vtx()._power_levels[8].mw = AP::vtx().get_configured_vtx_table_8_power_level_mw();
-    AP::vtx()._power_levels[8].dbm = AP::vtx().get_configured_vtx_table_8_power_level_dbm();
-    AP::vtx()._power_levels[8].dac = 0;
+        AP::vtx()._power_levels[8].level = AP::vtx().get_configured_vtx_table_8_power_level();
+        AP::vtx()._power_levels[8].mw = AP::vtx().get_configured_vtx_table_8_power_level_mw();
+        AP::vtx()._power_levels[8].dbm = AP::vtx().get_configured_vtx_table_8_power_level_dbm();
+        AP::vtx()._power_levels[8].dac = 0;
+    }
 
     // init uart
     port = AP::serialmanager().find_serial(AP_SerialManager::SerialProtocol_Tramp, 0);

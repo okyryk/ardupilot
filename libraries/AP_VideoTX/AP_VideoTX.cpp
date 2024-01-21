@@ -238,6 +238,12 @@ const AP_Param::GroupInfo AP_VideoTX::var_info[] = {
     // @Range: 0 50
     AP_GROUPINFO("T_P_MW_DBM_8", 34, AP_VideoTX, _vtx_table_8_power_level_dbm, 34),
 
+    // @Param: VTX TABLE ENABLE
+    // @DisplayName: Is the VTX table enabled or not
+    // @Description: Toggles the VTX table on and off
+    // @Values: 0:Disable,1:Enable
+    AP_GROUPINFO_FLAGS("TABLE_ENABLE", 35, AP_VideoTX, _vtx_table_enabled, 0, AP_PARAM_FLAG_ENABLE),
+
     AP_GROUPEND
 };
 
