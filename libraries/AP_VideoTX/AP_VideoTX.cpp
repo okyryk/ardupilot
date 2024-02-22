@@ -243,6 +243,20 @@ const AP_Param::GroupInfo AP_VideoTX::var_info[] = {
     // @Description: Toggles the VTX table on and off
     // @Values: 0:Disable,1:Enable
     AP_GROUPINFO_FLAGS("TABLE_ENABLE", 35, AP_VideoTX, _vtx_table_enabled, 0, AP_PARAM_FLAG_ENABLE),
+    
+#ifdef VTX_TRAMP_MODELS_SUPPORT
+    // @Param: VTX TRAMP_BAUD
+    // @DisplayName: VTX TRAMP_BAUD
+    // @Description: VTX tramp baud rate
+    // @Values: 9600, 9000
+    AP_GROUPINFO("TRAMP_BAUD", 36, AP_VideoTX, _vtx_tramp_baud, 9600),
+
+    // @Param: VTX MODEL
+    // @DisplayName: VTX MODEL
+    // @Description: VTX model. 0 - default, 1 - REAPER INFINITY 5W
+    // @Values: 0, 1
+    AP_GROUPINFO("MODEL", 37, AP_VideoTX, _vtx_tramp_transmiter_model, 0),
+#endif
 
     AP_GROUPEND
 };

@@ -23,7 +23,11 @@
 
 #if AP_TRAMP_ENABLED
 
+#define TRAMP_MODEL_DEFAULT             0
+#define TRAMP_MODEL_REAPER_INFINITY_5W  1
+
 #define AP_TRAMP_UART_BAUD            9600
+
 // request and response size is 16 bytes
 #define AP_TRAMP_UART_BUFSIZE_RX      32
 #define AP_TRAMP_UART_BUFSIZE_TX      32
@@ -37,6 +41,10 @@
 # define debug(fmt, args...)	do { hal.console->printf("TRAMP: " fmt "\n", ##args); } while (0)
 #else
 # define debug(fmt, args...)	do {} while(0)
+#endif
+
+#ifdef VTX_TRAMP_MODELS_SUPPORT
+bool is_use_receive_response_interactive = false;
 #endif
 
 extern const AP_HAL::HAL &hal;
@@ -78,6 +86,10 @@ void AP_Tramp::send_command(uint8_t cmd, uint16_t param)
     port->flush();
 
     debug("send command '%c': %u", cmd, param);
+
+#ifdef VTX_DEBUG_GCS
+    GCS_SEND_TEXT(MAV_SEVERITY_WARNING, "TRAMP: send command '%c': %u", cmd, param);
+#endif
 }
 
 // Process response and return code if valid else 0
@@ -96,6 +108,10 @@ char AP_Tramp::handle_response(void)
             device_limits.rf_power_max = response_buffer[6]|(response_buffer[7] << 8);
             debug("device limits: min freq: %u, max freq: %u, max power %u",
                 unsigned(device_limits.rf_freq_min), unsigned(device_limits.rf_freq_max), unsigned(device_limits.rf_power_max));
+#ifdef VTX_DEBUG_GCS
+    GCS_SEND_TEXT(MAV_SEVERITY_WARNING, "TRAMP: device limits: min freq: %u, max freq: %u, max power %u",
+                unsigned(device_limits.rf_freq_min), unsigned(device_limits.rf_freq_max), unsigned(device_limits.rf_power_max));
+#endif
             return 'r';
         }
         break;
@@ -138,7 +154,10 @@ char AP_Tramp::handle_response(void)
             debug("device config: freq: %u, power: %u, pitmode: %u",
                 unsigned(freq), unsigned(power), unsigned(pit_mode));
 
-
+#ifdef VTX_DEBUG_GCS
+    GCS_SEND_TEXT(MAV_SEVERITY_WARNING, "TRAMP: device config: freq: %u, power: %u, pitmode: %u",
+                unsigned(freq), unsigned(power), unsigned(pit_mode));
+#endif
             return 'v';
         }
         break;
@@ -170,17 +189,37 @@ void AP_Tramp::reset_receiver(void)
 char AP_Tramp::receive_response()
 {
     if (port == nullptr) {
+#ifdef VTX_DEBUG_GCS
+    GCS_SEND_TEXT(MAV_SEVERITY_WARNING, "port == nullptr");
+#endif
         return 0;
     }
 
     // wait for complete packet
     const uint16_t bytesNeeded = TRAMP_BUF_SIZE - receive_pos;
     if (port->available() < bytesNeeded) {
-        return 0;
+#ifdef VTX_DEBUG_GCS
+    const uint32_t available = port->available();
+    GCS_SEND_TEXT(MAV_SEVERITY_WARNING, "port->available() %u < bytesNeeded %u", unsigned(available), unsigned(bytesNeeded));
+
+
+    for (uint16_t i = 0; i < available; i++) {
+        if (receive_pos < TRAMP_BUF_SIZE) {
+            const int16_t b = port->read();
+            GCS_SEND_TEXT(MAV_SEVERITY_WARNING, "R:  %u  %#02x", unsigned(i), unsigned(b));
+        }
+    }
+
+#endif
+    return 0;
+
     }
 
     // sanity check
     if (bytesNeeded == 0) {
+#ifdef VTX_DEBUG_GCS
+    GCS_SEND_TEXT(MAV_SEVERITY_WARNING, "bytesNeeded == 0");
+#endif
         reset_receiver();
         return 0;
     }
@@ -189,6 +228,9 @@ char AP_Tramp::receive_response()
         const int16_t b = port->read();
         if (b < 0) {
             // uart claimed bytes available, but there were none
+#ifdef VTX_DEBUG_GCS
+    GCS_SEND_TEXT(MAV_SEVERITY_WARNING, "uart claimed bytes available, but there were none");
+#endif
             return 0;
         }
         const uint8_t c = uint8_t(b);
@@ -227,23 +269,146 @@ char AP_Tramp::receive_response()
                     // Checksum is correct, process response
                     const char r = handle_response();
 
-                    // Check response valid else keep on reading
                     if (r != 0) {
                         return r;
                     }
                 }
+#ifdef VTX_DEBUG_GCS
+                else {
+                    GCS_SEND_TEXT(MAV_SEVERITY_WARNING, "Checksum failed");
+                }
+#endif
             }
             break;
         }
         default:
             // Invalid state, reset state machine
+#ifdef VTX_DEBUG_GCS
+    GCS_SEND_TEXT(MAV_SEVERITY_WARNING, "Invalid state, reset state machine");
+#endif
             reset_receiver();
             break;
         }
     }
 
+#ifdef VTX_DEBUG_GCS
+    GCS_SEND_TEXT(MAV_SEVERITY_WARNING, "end receive");
+#endif
     return 0;
 }
+
+#ifdef VTX_TRAMP_MODELS_SUPPORT
+char AP_Tramp::receive_response_interactive()
+{
+    if (port == nullptr) {
+#ifdef VTX_DEBUG_GCS
+    GCS_SEND_TEXT(MAV_SEVERITY_WARNING, "port == nullptr");
+#endif
+        return 0;
+    }
+
+    const uint16_t bytesNeeded = TRAMP_BUF_SIZE - receive_pos;
+
+    const uint32_t available = port->available();
+
+    if (available == 0) {
+        reset_receiver();
+        return 0;
+    }
+
+    // sanity check
+    if (bytesNeeded == 0) {
+#ifdef VTX_DEBUG_GCS
+    GCS_SEND_TEXT(MAV_SEVERITY_WARNING, "bytesNeeded == 0");
+#endif
+        reset_receiver();
+        return 0;
+    }
+
+    for (uint16_t i = 0; i < available; i++) {
+        const int16_t b = port->read();
+        if (b < 0) {
+            // uart claimed bytes available, but there were none
+#ifdef VTX_DEBUG_GCS
+    GCS_SEND_TEXT(MAV_SEVERITY_WARNING, "uart claimed bytes available, but there were none");
+#endif
+            return 0;
+        }
+        const uint8_t c = uint8_t(b);
+
+#ifdef VTX_DEBUG_GCS
+GCS_SEND_TEXT(MAV_SEVERITY_WARNING, "R: %u  %u  %#02x", unsigned(receive_pos), unsigned(i), unsigned(c));
+#endif
+
+        response_buffer[receive_pos++] = c;
+
+        switch (receive_state) {
+        case ReceiveState::S_WAIT_LEN: {
+            if (c == 0x0F) {
+                // Found header byte, advance to wait for code
+                receive_state = ReceiveState::S_WAIT_CODE;
+            } else {
+                // Unexpected header, reset state machine
+                reset_receiver();
+            }
+            break;
+        }
+        case ReceiveState::S_WAIT_CODE: {
+            if (c == 'r' || c == 'v' || c == 's') {
+                // Code is for response is one we're interested in, advance to data
+                receive_state = ReceiveState::S_DATA;
+            } else {
+                // Unexpected code, reset state machine
+                reset_receiver();
+            }
+            break;
+        }
+        case ReceiveState::S_DATA: {
+            if (receive_pos == TRAMP_BUF_SIZE) {
+                // Buffer is full, calculate checksum
+
+               
+                const uint8_t cksum = checksum(response_buffer);
+
+                // Reset state machine ready for next response
+                reset_receiver();
+
+                if ((response_buffer[TRAMP_BUF_SIZE-2] == cksum) && (response_buffer[TRAMP_BUF_SIZE-1] == 0)) {
+
+                    const char r = handle_response();
+
+#ifdef VTX_DEBUG_GCS
+    GCS_SEND_TEXT(MAV_SEVERITY_WARNING, "handle_response %#02x", unsigned(r));
+#endif
+                    // Check response valid else keep on reading
+                    if (r != 0) {
+                        return r;
+                    }
+                }
+#ifdef VTX_DEBUG_GCS
+                else {
+                    GCS_SEND_TEXT(MAV_SEVERITY_WARNING, "Checksum failed");
+                }
+#endif
+            }
+            break;
+        }
+        default:
+            // Invalid state, reset state machine
+#ifdef VTX_DEBUG_GCS
+    GCS_SEND_TEXT(MAV_SEVERITY_WARNING, "Invalid state, reset state machine");
+#endif
+            reset_receiver();
+            break;
+        }
+    }
+
+#ifdef VTX_DEBUG_GCS
+    GCS_SEND_TEXT(MAV_SEVERITY_WARNING, "end receive");
+#endif
+    return 0;
+}
+#endif
 
 void AP_Tramp::send_query(uint8_t cmd)
 {
@@ -274,6 +439,26 @@ void AP_Tramp::set_status(TrampStatus _status)
             break;
     }
 #endif
+
+#ifdef VTX_DEBUG_GCS
+    switch (status) {
+        case TrampStatus::TRAMP_STATUS_OFFLINE:
+            GCS_SEND_TEXT(MAV_SEVERITY_WARNING, "TRAMP: status: OFFLINE");
+            break;
+        case TrampStatus::TRAMP_STATUS_INIT:
+            GCS_SEND_TEXT(MAV_SEVERITY_WARNING, "TRAMP: status: INIT");
+            break;
+        case TrampStatus::TRAMP_STATUS_ONLINE_MONITOR_FREQPWRPIT:
+            GCS_SEND_TEXT(MAV_SEVERITY_WARNING, "TRAMP: status: ONLINE_MONITOR_FREQPWRPIT");
+            break;
+        case TrampStatus::TRAMP_STATUS_ONLINE_MONITOR_TEMP:
+            GCS_SEND_TEXT(MAV_SEVERITY_WARNING, "TRAMP: status: ONLINE_MONITOR_TEMP");
+            break;
+        case TrampStatus::TRAMP_STATUS_ONLINE_CONFIG:
+            GCS_SEND_TEXT(MAV_SEVERITY_WARNING, "TRAMP: status: ONLINE_CONFIG");
+            break;
+    }
+#endif
 }
 
 void AP_Tramp::process_requests()
@@ -285,13 +470,29 @@ void AP_Tramp::process_requests()
     bool configUpdateRequired = false;
 
     // Read response from device
+#ifdef VTX_TRAMP_MODELS_SUPPORT
+    const char replyCode = is_use_receive_response_interactive 
+    ? receive_response_interactive() 
+    : receive_response();
+#else
     const char replyCode = receive_response();
+#endif
+
+    
     const uint32_t now = AP_HAL::micros();
 
 #ifdef TRAMP_DEBUG
     if (replyCode != 0) {
         debug("receive response '%c'", replyCode);
     }
+#endif
+
+#ifdef VTX_DEBUG_GCS
+    if (replyCode != 0) {
+        GCS_SEND_TEXT(MAV_SEVERITY_WARNING, "TRAMP: receive response '%c'", replyCode);
+    }
+
+    GCS_SEND_TEXT(MAV_SEVERITY_WARNING, "TRAMP: status '%u'", static_cast<int>(status));
 #endif
 
     // Act on state
@@ -302,6 +503,12 @@ void AP_Tramp::process_requests()
             // Device replied to reset? request, enter init
             set_status(TrampStatus::TRAMP_STATUS_INIT);
         } else if ((now - last_time_us) >= TRAMP_MIN_REQUEST_PERIOD_US) {
+
+#ifdef VTX_DEBUG_GCS
+    u_int32_t vdif = now - last_time_us;
+    GCS_SEND_TEXT(MAV_SEVERITY_WARNING, "TRAMP: now: %u, last_time_us: %u, dif: %u",
+            unsigned(now), unsigned(last_time_us), unsigned(vdif));
+#endif
             // Min request period exceeded, issue another reset?
             send_query('r');
 
@@ -316,6 +523,7 @@ void AP_Tramp::process_requests()
             // Device replied to freq / power / pit query, enter online
             set_status(TrampStatus::TRAMP_STATUS_ONLINE_MONITOR_FREQPWRPIT);
         } else if ((now - last_time_us) >= TRAMP_MIN_REQUEST_PERIOD_US) {
+
             // Min request period exceeded, issue another query
             send_query('v');
 
@@ -443,6 +651,10 @@ void AP_Tramp::set_frequency(uint16_t freq)
         retry_count = VTX_TRAMP_MAX_RETRIES;
     } else {
         debug("requested frequency %u is invalid", freq);
+
+#ifdef VTX_DEBUG_GCS
+        GCS_SEND_TEXT(MAV_SEVERITY_WARNING, "TRAMP: requested frequency %u is invalid", freq);
+#endif
         // not valid reset to default
         AP::vtx().set_configured_frequency_mhz(AP::vtx().get_frequency_mhz());
     }
@@ -481,6 +693,9 @@ bool AP_Tramp::init(void)
 {
     if (AP::vtx().get_enabled() == 0) {
         debug("protocol is not active");
+#ifdef VTX_DEBUG_GCS
+        GCS_SEND_TEXT(MAV_SEVERITY_WARNING, "TRAMP: protocol is not active");
+#endif
         return false;
     }
 
@@ -531,6 +746,18 @@ bool AP_Tramp::init(void)
         AP::vtx()._power_levels[8].dac = 0;
     }
 
+#ifdef VTX_TRAMP_MODELS_SUPPORT
+    u_int32_t tramp_uart_baud = AP_TRAMP_UART_BAUD;
+
+    if (AP::vtx().get_vtx_tramp_baud() > 7000 && AP::vtx().get_vtx_tramp_baud() < 11000){
+        tramp_uart_baud = AP::vtx().get_vtx_tramp_baud();
+    }
+
+    if (AP::vtx().get_vtx_tramp_transmiter_model() == TRAMP_MODEL_REAPER_INFINITY_5W){
+        is_use_receive_response_interactive = true;
+    }
+#endif
+
     // init uart
     port = AP::serialmanager().find_serial(AP_SerialManager::SerialProtocol_Tramp, 0);
     if (port != nullptr) {
@@ -538,10 +765,15 @@ bool AP_Tramp::init(void)
         port->set_stop_bits(1);
         port->set_flow_control(AP_HAL::UARTDriver::FLOW_CONTROL_DISABLE);
         port->set_options((port->get_options() & ~AP_HAL::UARTDriver::OPTION_RXINV));
-
+#ifdef VTX_TRAMP_MODELS_SUPPORT
+        port->begin(tramp_uart_baud, AP_TRAMP_UART_BUFSIZE_RX, AP_TRAMP_UART_BUFSIZE_TX);
+#else
         port->begin(AP_TRAMP_UART_BAUD, AP_TRAMP_UART_BUFSIZE_RX, AP_TRAMP_UART_BUFSIZE_TX);
+#endif
         debug("port opened");
-
+#ifdef VTX_DEBUG_GCS
+        GCS_SEND_TEXT(MAV_SEVERITY_WARNING, "TRAMP: port opened");
+#endif
         return true;
     }
     return false;

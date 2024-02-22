@@ -67,6 +67,9 @@ private:
     char handle_response();
     void reset_receiver();
     char receive_response();
+#ifdef VTX_TRAMP_MODELS_SUPPORT
+    char receive_response_interactive();
+#endif
     void send_query(uint8_t cmd);
     void process_requests();
     bool is_device_ready();

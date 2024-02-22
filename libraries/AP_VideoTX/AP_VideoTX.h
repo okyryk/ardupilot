@@ -163,7 +163,7 @@ public:
 
     static AP_VideoTX *singleton;
 
-     uint8_t get_configured_vtx_table_0_power_level() const { return _vtx_table_0_power_level_level; }
+    uint8_t get_configured_vtx_table_0_power_level() const { return _vtx_table_0_power_level_level; }
     uint8_t get_configured_vtx_table_1_power_level() const { return _vtx_table_1_power_level_level; }
     uint8_t get_configured_vtx_table_2_power_level() const { return _vtx_table_2_power_level_level; }
     uint8_t get_configured_vtx_table_3_power_level() const { return _vtx_table_3_power_level_level; }
@@ -194,6 +194,10 @@ public:
     uint8_t get_configured_vtx_table_8_power_level_dbm() const { return _vtx_table_8_power_level_dbm; }
 
     bool get_vtx_table_enabled() const { return _vtx_table_enabled; }
+#ifdef VTX_TRAMP_MODELS_SUPPORT
+    int32_t get_vtx_tramp_baud() const { return _vtx_tramp_baud; }
+    int8_t get_vtx_tramp_transmiter_model() const { return _vtx_tramp_transmiter_model; }
+#endif
 private:
     uint8_t find_current_power() const;
     // channel frequency
@@ -257,6 +261,10 @@ private:
      AP_Int8 _vtx_table_8_power_level_dbm;
 
      AP_Int8 _vtx_table_enabled;
+#ifdef VTX_TRAMP_MODELS_SUPPORT
+     AP_Int32 _vtx_tramp_baud;
+     AP_Int8 _vtx_tramp_transmiter_model;
+#endif
 };
 
 namespace AP {
