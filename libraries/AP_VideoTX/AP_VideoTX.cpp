@@ -716,9 +716,9 @@ void AP_VideoTX::change_power(int8_t position)
     }
 
     if (power == 0) {
-        if (!hal.util->get_soft_armed()) {    // don't allow pitmode to be entered if already armed
+        //if (!hal.util->get_soft_armed()) {    // don't allow pitmode to be entered if already armed
             set_configured_options(get_configured_options() | uint8_t(VideoOptions::VTX_PITMODE));
-        }
+        //}
     } else {
         if (has_option(VideoOptions::VTX_PITMODE)) {
             set_configured_options(get_configured_options() & ~uint8_t(VideoOptions::VTX_PITMODE));
